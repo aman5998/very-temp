@@ -1,0 +1,84 @@
+https://leetcode.com/problems/triangle/description/
+
+class Solution {
+public:
+    int solve(vector<vector<int>>& triangle, int row, int col) {
+        if (row >= triangle.size()) {
+            return 0;
+        }
+
+        int ans1 = triangle[row][col] + solve(triangle, row + 1, col);
+        int ans2 = triangle[row][col] + solve(triangle, row + 1, col + 1);
+
+        return min(ans1, ans2);
+    }
+
+    int solveUsingMem(vector<vector<int>>& triangle, int row, int col,
+                      vector<vector<int>>& dp) {
+        if (row >= triangle.size()) {
+            return 0;
+        }
+
+        if (dp[row][col] != INT_MAX)
+            return dp[row][col];
+
+        int ans1 = triangle[row][col] + solveUsingMem(triangle, row + 1, col, dp);
+        int ans2 = triangle[row][col] + solveUsingMem(triangle, row + 1, col + 1, dp);
+
+        dp[row][col] = min(ans1, ans2);
+
+        return dp[row][col];
+    }
+
+    int solveUsingTabulation(vector<vector<int>>& triangle) {
+        int n = triangle.size();
+        int m = triangle[n - 1].size();
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, INT_MAX));
+
+        for (int i = 0; i <= m; i++) {
+            dp[n][i] = 0;
+        }
+
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i; j >= 0; j--) {
+                int ans1 = triangle[i][j] + dp[i + 1][j];
+                int ans2 = triangle[i][j] + dp[i + 1][j + 1];
+                dp[i][j] = min(ans1, ans2);
+            }
+        }
+
+        return dp[0][0];
+    }
+
+    int solveUsingSO(vector<vector<int>>& triangle) {
+        int n = triangle.size();
+        int m = triangle[n - 1].size();
+        vector<int> curr(m + 1, 0);
+        vector<int> next(m + 1, 0);
+
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i; j >= 0; j--) {
+                int ans1 = triangle[i][j] + next[j];
+                int ans2 = triangle[i][j] + next[j + 1];
+                curr[j] = min(ans1, ans2);
+            }
+            next = curr;
+        }
+
+        return next[0];
+    }
+
+    int minimumTotal(vector<vector<int>>& triangle) {
+        // using recursion
+        // return solve(triangle, 0, 0);
+
+        // int n = triangle.size();
+        // int m = triangle[n - 1].size();
+        // vector<vector<int>> dp(n + 1, vector<int>(m + 1, INT_MAX));
+        // return solveUsingMem(triangle, 0, 0, dp);
+
+        // return solveUsingTabulation(triangle);
+
+        return solveUsingSO(triangle);
+    }
+};
