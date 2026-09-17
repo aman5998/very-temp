@@ -1,0 +1,42 @@
+https://leetcode.com/problems/shortest-and-lexicographically-smallest-beautiful-string/description/
+
+class Solution {
+public:
+    string shortestBeautifulSubstring(string s, int k) {
+        int i = 0;
+        int j = 0;
+
+        int len = INT_MAX;
+        int count = 0;
+        string ans = "";
+
+        while (j < s.size()) {
+            if (s[j] == '1') {
+                count++;
+            }
+
+            while (count > k || s[i] == '0') {
+                if (s[i] == '1') {
+                    count--;
+                }
+                i++;
+            }
+
+            if (count == k) {
+                int currLen = j - i + 1;
+                if (currLen < len) {
+                    len = currLen;
+                    ans = s.substr(i, len);
+                } else if (currLen == len) {
+                    string temp = s.substr(i, len);
+                    if (temp < ans) {
+                        ans = temp;
+                    }
+                }
+            }
+            j++;
+        }
+
+        return ans;
+    }
+};
